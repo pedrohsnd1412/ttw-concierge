@@ -44,47 +44,61 @@ export default function DescobrirClient() {
   const maxScore = results?.length ? Math.max(...results.map((r) => r.score), 0.0001) : 1;
 
   return (
-    <div>
-      <div className="card p-7 lg:sticky lg:top-0 lg:z-20">
-        <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
-          <div>
-            <label className="eyebrow">Gostos e perfil do cliente</label>
-            <textarea
-              value={prefs}
-              onChange={(e) => setPrefs(e.target.value)}
-              rows={4}
-              placeholder="Descreva o cliente: com quem viaja, do que gosta, ritmo desejado, ocasião…"
-              className="input-luxe mt-2 resize-none"
-            />
-            <div className="mt-3 flex flex-wrap gap-2">
-              {EXAMPLES.map((ex) => (
-                <button key={ex} onClick={() => setPrefs(ex)} className="rounded-full border border-line px-3 py-1 text-xs text-muted transition hover:border-champagne/50 hover:text-champagne">
-                  {ex.split(",")[0]}…
-                </button>
-              ))}
-            </div>
-          </div>
-          <div>
-            <label className="eyebrow">Temas de interesse</label>
-            <div className="mt-2 flex flex-wrap gap-2">
-              {THEMES.map((t) => (
-                <button key={t} onClick={() => toggle(t)} className={`chip ${sel.includes(t) ? "chip-on" : ""}`}>
-                  {t}
-                </button>
-              ))}
-            </div>
-          </div>
+    <div className="grid gap-6 lg:h-full lg:min-h-0 lg:grid-cols-[380px_1fr] lg:items-stretch">
+      <div className="card h-fit p-7 lg:h-full lg:min-h-0 lg:overflow-y-auto lg:overscroll-contain">
+        <label className="eyebrow">Gostos e perfil do cliente</label>
+        <textarea
+          value={prefs}
+          onChange={(e) => setPrefs(e.target.value)}
+          rows={3}
+          placeholder="Descreva o cliente: com quem viaja, do que gosta, ritmo desejado, ocasião…"
+          className="input-luxe mt-2 resize-none"
+        />
+        <div className="mt-3 flex flex-wrap gap-2">
+          {EXAMPLES.map((ex) => (
+            <button key={ex} onClick={() => setPrefs(ex)} className="rounded-full border border-line px-3 py-1 text-xs text-muted transition hover:border-champagne/50 hover:text-champagne">
+              {ex.split(",")[0]}…
+            </button>
+          ))}
         </div>
-        <button onClick={discover} disabled={loading} className="btn-gold mt-6">
+
+        <div className="my-5 hairline" />
+
+        <label className="eyebrow">Temas de interesse</label>
+        <div className="mt-2 flex flex-wrap gap-2">
+          {THEMES.map((t) => (
+            <button key={t} onClick={() => toggle(t)} className={`chip ${sel.includes(t) ? "chip-on" : ""}`}>
+              {t}
+            </button>
+          ))}
+        </div>
+
+        <button onClick={discover} disabled={loading} className="btn-gold mt-6 w-full">
           {loading ? "Buscando destinos…" : "Encontrar destino ideal"}
         </button>
         {error && <p className="mt-3 text-sm text-red-400">{error}</p>}
       </div>
 
-      {results && (
-        <div className="mt-8 fadeup">
+      <div className="lg:h-full lg:min-h-0 lg:overflow-y-auto lg:overscroll-contain lg:pr-2">
+        {!results && !loading && (
+          <div className="card flex h-full min-h-[400px] flex-col items-center justify-center p-12 text-center lg:min-h-0">
+            <p className="font-serif text-2xl text-ivory/40">As recomendações aparecerão aqui</p>
+            <p className="mt-2 max-w-sm text-sm text-muted">
+              Descreva o perfil do cliente para comparar suas preferências com a assinatura real dos destinos.
+            </p>
+          </div>
+        )}
+
+        {loading && (
+          <div className="card flex h-full min-h-[400px] items-center justify-center p-12 lg:min-h-0">
+            <p className="animate-pulse font-serif text-xl text-champagne/70">Comparando destinos…</p>
+          </div>
+        )}
+
+        {results && (
+          <div className="fadeup">
           <p className="eyebrow mb-4">Destinos recomendados · por aderência ao perfil</p>
-          <div className="grid gap-5 lg:grid-cols-2">
+          <div className="grid gap-5">
             {results.map((r, i) => (
               <div key={r.city} className="card p-7">
                 <div className="flex items-start justify-between">
@@ -137,8 +151,9 @@ export default function DescobrirClient() {
               </div>
             ))}
           </div>
-        </div>
-      )}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

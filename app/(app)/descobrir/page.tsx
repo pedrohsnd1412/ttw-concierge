@@ -4,6 +4,7 @@ import DescobrirClient from "@/components/DescobrirClient";
 export default function DescobrirPage() {
   return (
     <PageShell
+      contained
       header={
         <PageHeader
           eyebrow="Concierge · Descobrir Destino"

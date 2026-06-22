@@ -97,9 +97,9 @@ function ConciergeInner({ cities }: { cities: { city: string; country: string }[
   }
 
   return (
-    <div className="grid items-start gap-8 lg:grid-cols-[380px_1fr]">
+    <div className="grid gap-6 lg:h-full lg:min-h-0 lg:grid-cols-[380px_1fr] lg:items-stretch">
       {/* Painel de controle */}
-      <div className="card h-fit p-7 no-print lg:sticky lg:top-0">
+      <div className="card h-fit p-7 no-print lg:h-full lg:min-h-0 lg:overflow-y-auto lg:overscroll-contain">
         <p className="eyebrow">Briefing</p>
         <h2 className="mt-1 font-serif text-2xl text-ivory">Compor roteiro</h2>
         <div className="my-5 hairline" />
@@ -149,9 +149,9 @@ function ConciergeInner({ cities }: { cities: { city: string; country: string }[
       </div>
 
       {/* Resultado */}
-      <div>
+      <div className="lg:h-full lg:min-h-0 lg:overflow-y-auto lg:overscroll-contain lg:pr-2">
         {!result && !loading && (
-          <div className="card flex h-full min-h-[400px] flex-col items-center justify-center p-12 text-center">
+          <div className="card flex h-full min-h-[400px] flex-col items-center justify-center p-12 text-center lg:min-h-0">
             <p className="font-serif text-2xl text-ivory/40">A sua proposta aparecerá aqui</p>
             <p className="mt-2 max-w-sm text-sm text-muted">
               Escolha um destino e gere um roteiro construído a partir do histórico real de viagens TTW.
@@ -159,7 +159,7 @@ function ConciergeInner({ cities }: { cities: { city: string; country: string }[
           </div>
         )}
         {loading && (
-          <div className="card flex h-full min-h-[400px] items-center justify-center p-12">
+          <div className="card flex h-full min-h-[400px] items-center justify-center p-12 lg:min-h-0">
             <p className="animate-pulse font-serif text-xl text-champagne/70">Curando experiências…</p>
           </div>
         )}

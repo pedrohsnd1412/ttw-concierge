@@ -6,6 +6,7 @@ export default function ConciergePage() {
   const cities = insights.destinos_ranking.map((d) => ({ city: d.city, country: d.country }));
   return (
     <PageShell
+      contained
       header={
         <PageHeader
           eyebrow="Concierge de Roteiros · Curadoria Inteligente"

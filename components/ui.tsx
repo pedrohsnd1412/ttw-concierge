@@ -1,6 +1,6 @@
 export function PageHeader({ eyebrow, title, subtitle }: { eyebrow: string; title: string; subtitle?: string }) {
   return (
-    <header className="mb-10 fadeup">
+    <header className="fadeup">
       <p className="eyebrow">{eyebrow}</p>
       <h1 className="mt-2 font-serif text-4xl text-ivory lg:text-5xl">{title}</h1>
       {subtitle && <p className="mt-3 max-w-2xl text-sm leading-relaxed text-muted">{subtitle}</p>}
@@ -12,22 +12,26 @@ export function PageHeader({ eyebrow, title, subtitle }: { eyebrow: string; titl
 export function PageShell({
   header,
   pinned,
+  contained = false,
   children,
 }: {
   header: React.ReactNode;
   pinned?: React.ReactNode;
+  contained?: boolean;
   children: React.ReactNode;
 }) {
   return (
     <div className="lg:flex lg:h-full lg:min-h-0 lg:flex-col">
-      <div data-page-pinned className="shrink-0">
-        {header}
-        {pinned}
-      </div>
+      <div data-page-pinned className="shrink-0">{header}</div>
       <div
         data-page-scroll
-        className="mt-10 pb-8 lg:min-h-0 lg:flex-1 lg:overflow-y-auto lg:overscroll-contain lg:pr-4"
+        className={`mt-5 pb-8 lg:min-h-0 lg:flex-1 lg:pr-4 ${
+          contained
+            ? "lg:overflow-hidden"
+            : "lg:overflow-y-auto lg:overscroll-contain"
+        }`}
       >
+        {pinned && <div className="mb-10">{pinned}</div>}
         {children}
       </div>
     </div>
