@@ -9,6 +9,7 @@
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
 import {
   composeIntro,
+  cleanActivityText,
   getDestination,
   THEME_KEYWORDS,
   vectorizeQuery,
@@ -63,10 +64,7 @@ function queryText(preferences: string, themes: string[]) {
 }
 
 function activityKey(description: string) {
-  return description
-    .replace(/<[^>]*>/g, " ")
-    .replace(/\s+/g, " ")
-    .trim()
+  return cleanActivityText(description)
     .slice(0, 120)
     .toLowerCase();
 }
@@ -136,7 +134,7 @@ export async function buildSupabaseItinerary(
         sourceId: row.id,
         tripId: row.trip_id,
         themes: rowThemes,
-        text: row.description,
+        text: cleanActivityText(row.description),
       });
       rowThemes.forEach((theme) => usedThemes.add(theme));
     }
@@ -153,7 +151,7 @@ export async function buildSupabaseItinerary(
       sourceId: row.id,
       tripId: row.trip_id,
       themes: row.themes || [],
-      text: row.description,
+      text: cleanActivityText(row.description),
     });
   }
 
@@ -184,6 +182,6 @@ export async function pickSupabaseAlternativeDay(
     sourceId: row.id,
     tripId: row.trip_id,
     themes: row.themes || [],
-    text: row.description,
+    text: cleanActivityText(row.description),
   };
 }

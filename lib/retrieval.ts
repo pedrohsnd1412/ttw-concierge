@@ -52,6 +52,10 @@ function tokenize(text: string): string[] {
   return t.split(/\s+/).filter((w) => w.length > 2 && !STOP.has(w));
 }
 
+export function cleanActivityText(text: string): string {
+  return text.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+}
+
 /** Vetoriza uma query livre no mesmo espaço TF-IDF do corpus. */
 export function vectorizeQuery(text: string): Record<string, number> {
   const toks = tokenize(text);
@@ -124,7 +128,7 @@ export function buildItinerary(
     if (picked.length >= nDays) break;
     const novel = a.themes.some((t) => !usedThemes.has(t));
     if (picked.length < nDays && (novel || scored.length <= nDays || picked.length < 1)) {
-      picked.push({ day: picked.length + 1, sourceId: a.id, tripId: a.trip_id, themes: a.themes, text: a.text });
+      picked.push({ day: picked.length + 1, sourceId: a.id, tripId: a.trip_id, themes: a.themes, text: cleanActivityText(a.text) });
       a.themes.forEach((t) => usedThemes.add(t));
     }
   }
@@ -133,7 +137,7 @@ export function buildItinerary(
     for (const { a } of scored) {
       if (picked.length >= nDays) break;
       if (!picked.find((p) => p.sourceId === a.id))
-        picked.push({ day: picked.length + 1, sourceId: a.id, tripId: a.trip_id, themes: a.themes, text: a.text });
+        picked.push({ day: picked.length + 1, sourceId: a.id, tripId: a.trip_id, themes: a.themes, text: cleanActivityText(a.text) });
     }
   }
   picked.forEach((p, i) => (p.day = i + 1));
@@ -169,7 +173,7 @@ export function pickAlternativeDay(
   // variedade: sorteia entre os 5 melhores
   const top = scored.slice(0, Math.min(5, scored.length));
   const { a } = top[Math.floor(Math.random() * top.length)];
-  return { sourceId: a.id, tripId: a.trip_id, themes: a.themes, text: a.text };
+  return { sourceId: a.id, tripId: a.trip_id, themes: a.themes, text: cleanActivityText(a.text) };
 }
 
 export function composeIntro(city: string, country: string, nDays: number, themes: string[]): string {
@@ -225,7 +229,7 @@ export function discoverDestinations(
         return true;
       })
       .slice(0, 3)
-      .map((x) => ({ id: x.a.id, text: x.a.text }));
+      .map((x) => ({ id: x.a.id, text: cleanActivityText(x.a.text) }));
 
     const matchedThemes = themes.filter((t) => (d.theme_scores[t] || 0) >= 0.12);
     return {
