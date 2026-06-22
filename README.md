@@ -23,12 +23,12 @@ npm run dev
 # abra http://localhost:3000
 ```
 
-Login de demonstração:
+O acesso e a integração com o Supabase são configurados pelas variáveis descritas em
+`.env.example`. Use um arquivo `.env.local`; credenciais e chaves reais não devem ser
+versionadas.
 
-- **e-mail:** `consultor@ttw.com`
-- **senha:** `ttwluxo2026`
-
-Não precisa de banco, chave de API nem internet (exceto para as fontes, que têm fallback).
+Os dados de conteúdo contam com fallback local para manter a experiência disponível em
+desenvolvimento quando a fonte remota não estiver acessível.
 
 ---
 

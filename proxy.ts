@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-const SECRET = process.env.TTW_AUTH_SECRET || "ttw-dev-secret";
-
-async function expectedToken(): Promise<string> {
+async function expectedToken(): Promise<string | null> {
+  const secret = process.env.TTW_AUTH_SECRET;
+  if (!secret) return null;
   const key = await crypto.subtle.importKey(
     "raw",
-    new TextEncoder().encode(SECRET),
+    new TextEncoder().encode(secret),
     { name: "HMAC", hash: "SHA-256" },
     false,
     ["sign"]
