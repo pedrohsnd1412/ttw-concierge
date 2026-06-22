@@ -18,7 +18,6 @@ function ConciergeInner({ cities }: { cities: { city: string; country: string }[
   const params = useSearchParams();
   const [city, setCity] = useState(cities[0]?.city || "");
   const [days, setDays] = useState(3);
-  const [prefs, setPrefs] = useState("");
   const [sel, setSel] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [swapping, setSwapping] = useState<number | null>(null);
@@ -29,11 +28,9 @@ function ConciergeInner({ cities }: { cities: { city: string; country: string }[
   // pré-preenchimento via link (handoff do Descobrir Destino)
   useEffect(() => {
     const qCity = params.get("city");
-    const qPrefs = params.get("prefs");
     const qThemes = params.get("themes");
     const qDays = params.get("days");
     if (qCity && cities.find((c) => c.city === qCity)) setCity(qCity);
-    if (qPrefs) setPrefs(qPrefs);
     if (qThemes) setSel(qThemes.split(",").filter(Boolean));
     if (qDays) setDays(Math.min(Math.max(Number(qDays) || 3, 1), 7));
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -51,7 +48,7 @@ function ConciergeInner({ cities }: { cities: { city: string; country: string }[
     const res = await fetch("/api/concierge", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ city, days, preferences: prefs, themes: sel }),
+      body: JSON.stringify({ city, days, themes: sel }),
     });
     setLoading(false);
     if (res.ok) setResult(await res.json());
@@ -65,7 +62,7 @@ function ConciergeInner({ cities }: { cities: { city: string; country: string }[
     const res = await fetch("/api/concierge/day", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ city: result.city, excludeIds, preferences: prefs, themes: sel }),
+      body: JSON.stringify({ city: result.city, excludeIds, themes: sel }),
     });
     setSwapping(null);
     if (res.ok) {
@@ -118,15 +115,6 @@ function ConciergeInner({ cities }: { cities: { city: string; country: string }[
           type="range" min={1} max={7} value={days}
           onChange={(e) => setDays(Number(e.target.value))}
           className="mt-3 w-full accent-[#C2A56A]"
-        />
-
-        <label className="eyebrow mt-5 block">Preferências do cliente (opcional)</label>
-        <textarea
-          value={prefs}
-          onChange={(e) => setPrefs(e.target.value)}
-          rows={3}
-          placeholder="ex.: casal apaixonado por gastronomia e arte, ritmo tranquilo"
-          className="input-luxe mt-2 resize-none"
         />
 
         <label className="eyebrow mt-5 block">Tons da viagem</label>
