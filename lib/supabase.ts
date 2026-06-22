@@ -62,6 +62,15 @@ function queryText(preferences: string, themes: string[]) {
     .trim();
 }
 
+function activityKey(description: string) {
+  return description
+    .replace(/<[^>]*>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, 120)
+    .toLowerCase();
+}
+
 function denseEmbedding(text: string): number[] | null {
   if (!text) return null;
   const sparse = vectorizeQuery(text);
@@ -107,7 +116,7 @@ export async function buildSupabaseItinerary(
   preferences = "",
   themes: string[] = []
 ): Promise<ConciergeResult | null> {
-  const rows = await rankedPool(city, preferences, themes, Math.max(nDays * 8, 40));
+  const rows = await rankedPool(city, preferences, themes, Math.max(nDays * 20, 120));
   if (!rows.length) return null;
 
   const seen = new Set<string>();
@@ -117,7 +126,7 @@ export async function buildSupabaseItinerary(
   for (const row of rows) {
     if (picked.length >= nDays) break;
     const rowThemes = row.themes || [];
-    const dedupeKey = row.description.slice(0, 80);
+    const dedupeKey = activityKey(row.description);
     if (seen.has(dedupeKey)) continue;
     seen.add(dedupeKey);
     const addsVariety = rowThemes.some((theme) => !usedThemes.has(theme));
@@ -136,6 +145,9 @@ export async function buildSupabaseItinerary(
   for (const row of rows) {
     if (picked.length >= nDays) break;
     if (picked.some((day) => day.sourceId === row.id)) continue;
+    const dedupeKey = activityKey(row.description);
+    if (seen.has(dedupeKey)) continue;
+    seen.add(dedupeKey);
     picked.push({
       day: picked.length + 1,
       sourceId: row.id,
