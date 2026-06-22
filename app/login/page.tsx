@@ -78,10 +78,12 @@ function LoginInner() {
               {loading ? "Entrando…" : "Entrar"}
             </button>
           </form>
-          <p className="mt-6 text-center text-xs text-muted/70">
-            Demo: <span className="text-champagne/80">consultor@ttw.com</span> · senha{" "}
-            <span className="text-champagne/80">ttwluxo2026</span>
-          </p>
+          {process.env.NODE_ENV !== "production" && (
+            <p className="mt-6 text-center text-xs text-muted/70">
+              Demo: <span className="text-champagne/80">consultor@ttw.com</span> · senha{" "}
+              <span className="text-champagne/80">ttwluxo2026</span>
+            </p>
+          )}
         </div>
         <p className="mt-8 text-center text-[10px] uppercase tracking-luxe text-muted/50">
           TTW Group · Travel The World
