@@ -8,7 +8,7 @@ deriva features de negócio (duração, multi-destino, perfil/temas) e exporta:
   - data/ttw_clean.csv          : base limpa e auditável
   - lib/data/activities.json    : corpus de atividades (retrieval do Concierge)
   - lib/data/destinations.json  : perfil de cada destino (temas, sazonalidade)
-  - lib/data/vocab.json         : vocabulário + IDF para busca semântica (modo demo)
+  - lib/data/vocab.json         : vocabulário + IDF para busca semântica local
   - public/data/insights.json   : insights agregados (dashboard)
 
 Decisões de tratamento são registradas em data/relatorio_qualidade.json.
@@ -18,7 +18,7 @@ from collections import Counter, defaultdict
 import pandas as pd
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-RAW = os.environ.get("TTW_RAW_CSV", os.path.join(ROOT, "..", "TTW Group - Desafio", "ttw_case_candidatos.csv"))
+RAW = os.environ.get("TTW_RAW_CSV", os.path.join(ROOT, "..", "ttw_case_candidatos.csv"))
 if not os.path.exists(RAW):
     RAW = os.path.join(ROOT, "data", "ttw_case_candidatos.csv")
 
@@ -136,7 +136,7 @@ quality = {
 }
 
 # ---------------------------------------------------------------------------
-# 5. TF-IDF compacto (modo demo de busca semantica)
+# 5. TF-IDF compacto (fallback local de busca semantica)
 # ---------------------------------------------------------------------------
 docs = df["description"].fillna("").tolist()
 tokenized = [tokenize(d) for d in docs]

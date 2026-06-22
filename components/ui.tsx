@@ -9,6 +9,31 @@ export function PageHeader({ eyebrow, title, subtitle }: { eyebrow: string; titl
   );
 }
 
+export function PageShell({
+  header,
+  pinned,
+  children,
+}: {
+  header: React.ReactNode;
+  pinned?: React.ReactNode;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="lg:flex lg:h-full lg:min-h-0 lg:flex-col">
+      <div data-page-pinned className="shrink-0">
+        {header}
+        {pinned}
+      </div>
+      <div
+        data-page-scroll
+        className="mt-10 pb-8 lg:min-h-0 lg:flex-1 lg:overflow-y-auto lg:overscroll-contain lg:pr-4"
+      >
+        {children}
+      </div>
+    </div>
+  );
+}
+
 export function Kpi({ value, label, hint }: { value: string | number; label: string; hint?: string }) {
   return (
     <div className="card p-6">

@@ -97,9 +97,9 @@ function ConciergeInner({ cities }: { cities: { city: string; country: string }[
   }
 
   return (
-    <div className="grid gap-8 lg:grid-cols-[380px_1fr]">
+    <div className="grid items-start gap-8 lg:grid-cols-[380px_1fr]">
       {/* Painel de controle */}
-      <div className="card h-fit p-7 no-print">
+      <div className="card h-fit p-7 no-print lg:sticky lg:top-0">
         <p className="eyebrow">Briefing</p>
         <h2 className="mt-1 font-serif text-2xl text-ivory">Compor roteiro</h2>
         <div className="my-5 hairline" />

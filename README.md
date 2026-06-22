@@ -1,21 +1,21 @@
 # TTW Concierge — Plataforma de Inteligência de Roteiros
 
-MVP para o case técnico TTW. Uma plataforma web (Next.js + React) com identidade de
-alto luxo que resolve os dois desafios em um único produto:
+Plataforma interna para a equipe de consultores TTW, construída em Next.js + React
+com uma experiência visual alinhada ao turismo de alto luxo:
 
-- **Desafio 1 — Concierge de roteiros:** gera sugestões de roteiro para um destino, no
+- **Concierge de roteiros:** gera sugestões de roteiro para um destino, no
   tom TTW, a partir do **histórico real** de viagens (retrieval — sem inventar lugares).
-- **Desafio 2 — Inteligência de destinos:** um dashboard que lê a base e revela destinos,
+- **Inteligência de destinos:** um dashboard que lê a base e revela destinos,
   sazonalidade, perfil/assinatura de cada lugar e o estado de qualidade dos dados.
 - **Bônus pedido na conversa — Descobrir Destino:** o consultor descreve os gostos do
   cliente e a plataforma recomenda o destino e as experiências mais aderentes, com o porquê.
 
-> Tudo roda **sem nenhuma configuração** (modo demo, índice local). O caminho de produção
+> Tudo roda **sem nenhuma configuração externa** (fallback local). O caminho de produção
 > com **Supabase + pgvector** já está implementado e documentado — basta preencher o `.env`.
 
 ---
 
-## Como rodar (modo demo, 2 minutos)
+## Como rodar localmente
 
 ```bash
 npm install
@@ -62,7 +62,7 @@ Descobrir Destino, e o que torna as recomendações **explicáveis**.
 vividos por viajantes TTW — o sistema seleciona, diversifica por tema e recombina. Isso
 evita alucinação de locais e mantém o tom da casa.
 
-- **Modo demo (padrão):** índice **TF-IDF** local (vetorização espelhada entre o Python e o
+- **Fallback local:** índice **TF-IDF** local (vetorização espelhada entre o Python e o
   TypeScript em `lib/retrieval.ts`). Busca por similaridade de cosseno, 100% offline.
 - **Modo produção (Supabase):** busca vetorial em **pgvector**, com os vetores TF-IDF
   auditáveis do próprio pipeline (sem custo externo e sem alucinação).
@@ -83,12 +83,12 @@ destino) + afinidade temática direta, e sempre devolve o **porquê** da recomen
 ```
 app/
   login/                 # autenticação (tela)
-  (app)/dashboard/       # Desafio 2 — inteligência de destinos
-  (app)/concierge/       # Desafio 1 — geração de roteiro
+  (app)/dashboard/       # inteligência de destinos
+  (app)/concierge/       # geração de roteiro
   (app)/descobrir/       # gostos do cliente → destino ideal
   api/{auth,concierge,match}/   # rotas server-side
 lib/
-  retrieval.ts           # motor de busca/composição (modo demo)
+  retrieval.ts           # motor de busca/composição (fallback local)
   supabase.ts            # caminho de produção (pgvector)
   data/*.json            # artefatos gerados pelo pipeline
 scripts/

@@ -20,7 +20,10 @@ export default function Sidebar() {
   }
 
   return (
-    <aside className="hidden w-72 shrink-0 flex-col border-r border-line bg-ink/60 px-6 py-8 lg:flex">
+    <aside
+      data-sidebar
+      className="fixed inset-y-0 left-0 z-40 hidden w-72 flex-col border-r border-line bg-ink/95 px-6 py-8 backdrop-blur-xl lg:flex"
+    >
       <div className="px-2">
         <WordmarkInline />
       </div>

@@ -1,5 +1,5 @@
 /**
- * Camada Supabase (produção). É OPCIONAL — o app roda em modo demo com o índice
+ * Camada Supabase (produção). É OPCIONAL — o app usa o fallback local com o índice
  * local (lib/retrieval.ts) quando estas variáveis não estão definidas.
  *
  * Caminho de produção:

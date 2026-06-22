@@ -1,5 +1,5 @@
 import insights from "@/public/data/insights.json";
-import { PageHeader, Kpi, SectionTitle } from "@/components/ui";
+import { PageHeader, PageShell, Kpi, SectionTitle } from "@/components/ui";
 import { BarList, Heat12 } from "@/components/charts";
 import DestinationExplorer from "@/components/DestinationExplorer";
 
@@ -19,24 +19,26 @@ export default function DashboardPage() {
   const noise = q.linhas_totais - resolved;
 
   return (
-    <div>
-      <PageHeader
-        eyebrow="Desafio 2 · Inteligência de Destinos"
-        title="O que a base revela"
-        subtitle="Leitura do histórico real de roteiros TTW: para onde se viaja, em que época, com que assinatura de experiências — e o estado da base que sustenta tudo isso."
-      />
-
-      {/* KPIs */}
-      <div className="grid grid-cols-2 gap-4 lg:grid-cols-5">
-        <Kpi value={k.atividades.toLocaleString("pt-BR")} label="Atividades" hint="linhas na amostra" />
-        <Kpi value={k.viagens.toLocaleString("pt-BR")} label="Viagens únicas" />
-        <Kpi value={k.destinos} label="Destinos canônicos" hint="de 186 valores brutos" />
-        <Kpi value={k.anos} label="Período coberto" />
-        <Kpi value={`${k.cobertura_descricao}%`} label="Com descrição" hint="campo principal" />
-      </div>
-
+    <PageShell
+      header={
+        <PageHeader
+          eyebrow="Inteligência de Destinos · Visão Executiva"
+          title="O que a base revela"
+          subtitle="Leitura do histórico real de roteiros TTW: para onde se viaja, em que época, com que assinatura de experiências — e o estado da base que sustenta tudo isso."
+        />
+      }
+      pinned={
+        <div className="grid grid-cols-2 gap-4 lg:grid-cols-5">
+          <Kpi value={k.atividades.toLocaleString("pt-BR")} label="Atividades" hint="linhas na amostra" />
+          <Kpi value={k.viagens.toLocaleString("pt-BR")} label="Viagens únicas" />
+          <Kpi value={k.destinos} label="Destinos canônicos" hint="de 186 valores brutos" />
+          <Kpi value={k.anos} label="Período coberto" />
+          <Kpi value={`${k.cobertura_descricao}%`} label="Com descrição" hint="campo principal" />
+        </div>
+      }
+    >
       {/* Ranking + Temas */}
-      <div className="mt-12 grid gap-6 lg:grid-cols-2">
+      <div className="grid gap-6 lg:grid-cols-2">
         <div className="card p-7">
           <SectionTitle note="atividades na amostra">Destinos mais frequentes</SectionTitle>
           <BarList data={ranking} />
@@ -104,7 +106,7 @@ export default function DashboardPage() {
           </p>
         </div>
       </div>
-    </div>
+    </PageShell>
   );
 }
 

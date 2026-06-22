@@ -45,7 +45,7 @@ export default function DescobrirClient() {
 
   return (
     <div>
-      <div className="card p-7">
+      <div className="card p-7 lg:sticky lg:top-0 lg:z-20">
         <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
           <div>
             <label className="eyebrow">Gostos e perfil do cliente</label>

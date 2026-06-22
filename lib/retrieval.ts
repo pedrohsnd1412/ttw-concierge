@@ -1,5 +1,5 @@
 /**
- * Motor de retrieval — modo demo (índice local em JSON).
+ * Motor de retrieval — fallback local (índice em JSON).
  *
  * Espelha a lógica de vetorização do pipeline Python (TF-IDF) para que a busca
  * por similaridade rode sem dependências externas. Quando o Supabase estiver
