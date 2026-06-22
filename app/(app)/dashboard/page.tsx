@@ -21,7 +21,7 @@ export default function DashboardPage() {
       header={
         <PageHeader
           eyebrow="Inteligência de Destinos · Visão Executiva"
-          title="O que a base revela"
+          title="O que nosso histórico revela"
           subtitle="Leitura do histórico real de roteiros TTW: para onde se viaja, em que época, com que assinatura de experiências — e o estado da base que sustenta tudo isso."
         />
       }
