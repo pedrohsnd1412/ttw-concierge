@@ -1,0 +1,85 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+  --font-serif: "Cormorant Garamond", Georgia, serif;
+  --font-sans: "Inter", system-ui, sans-serif;
+}
+
+html, body {
+  background-color: #0B0B0D;
+  color: #F4EFE6;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  background-image:
+    radial-gradient(1200px 600px at 80% -10%, rgba(194,165,106,0.08), transparent),
+    radial-gradient(900px 500px at -10% 110%, rgba(194,165,106,0.05), transparent);
+  background-attachment: fixed;
+}
+
+/* Scrollbar refinada */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: #0B0B0D; }
+::-webkit-scrollbar-thumb { background: #2a2a30; border-radius: 8px; }
+::-webkit-scrollbar-thumb:hover { background: #3a3a42; }
+
+@layer components {
+  .eyebrow {
+    @apply text-[11px] uppercase tracking-luxe text-champagne/80 font-sans;
+  }
+  .card {
+    @apply rounded-xl border border-line bg-ink/80 backdrop-blur-sm shadow-luxe;
+  }
+  .hairline {
+    @apply h-px w-full bg-gold-line;
+  }
+  .btn-gold {
+    @apply inline-flex items-center justify-center gap-2 rounded-md bg-champagne px-6 py-3
+           text-sm font-medium uppercase tracking-[0.15em] text-noir transition
+           hover:bg-champagne-light disabled:opacity-40 disabled:cursor-not-allowed;
+  }
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-md border border-line px-5 py-2.5
+           text-sm uppercase tracking-[0.12em] text-ivory/90 transition hover:border-champagne/60 hover:text-champagne;
+  }
+  .input-luxe {
+    @apply w-full rounded-md border border-line bg-noir/60 px-4 py-3 text-ivory placeholder-muted/60
+           outline-none transition focus:border-champagne/60;
+  }
+  .chip {
+    @apply cursor-pointer select-none rounded-full border border-line px-4 py-1.5 text-sm text-ivory/80
+           transition hover:border-champagne/60;
+  }
+  .chip-on {
+    @apply border-champagne bg-champagne/15 text-champagne;
+  }
+}
+
+@keyframes fadeup {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fadeup { animation: fadeup 0.5s ease both; }
+
+/* Impressão / PDF — roteiro limpo e apresentável ao cliente */
+@media print {
+  body { background: #fff !important; color: #1a1a1a !important; }
+  .no-print { display: none !important; }
+  aside { display: none !important; }
+  main { padding: 0 !important; }
+  .print-area { animation: none !important; }
+  .print-area .card {
+    border: none !important;
+    box-shadow: none !important;
+    background: #fff !important;
+    padding: 0.4rem 0 1rem !important;
+    border-bottom: 1px solid #e6ddcb !important;
+    border-radius: 0 !important;
+  }
+  .print-area, .print-area * { color: #1a1a1a !important; }
+  .print-area .eyebrow { color: #9E834C !important; }
+}
