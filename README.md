@@ -23,6 +23,15 @@ npm run dev
 # abra http://localhost:3000
 ```
 
+Para reproduzir o processamento e validar todos os indicadores a partir do CSV bruto:
+
+```bash
+python3 -m venv .venv
+.venv/bin/python -m pip install -r requirements.txt
+npm run data:process
+npm run data:validate
+```
+
 O acesso e a integração com o Supabase são configurados pelas variáveis descritas em
 `.env.example`. Use um arquivo `.env.local`; credenciais e chaves reais não devem ser
 versionadas.

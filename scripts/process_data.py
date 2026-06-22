@@ -105,6 +105,10 @@ def tag_themes(desc):
             found.append(theme)
     return found
 
+def clean_description(desc):
+    if not isinstance(desc, str): return ""
+    return re.sub(r"\s+", " ", re.sub(r"<[^>]*>", " ", desc)).strip()
+
 # ---------------------------------------------------------------------------
 # 3. Carrega e trata
 # ---------------------------------------------------------------------------
@@ -116,9 +120,11 @@ res = df["city"].apply(resolve_city)
 df["city_clean"] = res.apply(lambda x: x[0])
 df["city_status"] = res.apply(lambda x: x[1])
 df["has_description"] = df["description"].notna() & (df["description"].str.strip().str.len() > 0)
+df["_description_clean"] = df["description"].apply(clean_description)
 df["themes"] = df["description"].apply(tag_themes)
 df["year"] = df["date"].dt.year
 df["month"] = df["date"].dt.month
+usable_mask = df["city_clean"].notna() & df["has_description"]
 
 # ---------------------------------------------------------------------------
 # 4. Relatorio de qualidade (auditavel)
@@ -132,6 +138,10 @@ quality = {
     "cidades_brutas_distintas": int(df["city"].nunique()),
     "cidades_canonicas": int(df["city_clean"].nunique()),
     "linhas_com_destino_resolvido": int(df["city_clean"].notna().sum()),
+    "linhas_utilizaveis": int(usable_mask.sum()),
+    "pct_linhas_utilizaveis": round(100*usable_mask.mean(),1),
+    "narrativas_distintas": int(df.loc[df["has_description"], "_description_clean"].nunique()),
+    "descricoes_com_html": int(df["description"].fillna("").str.contains(r"<[^>]+>", regex=True).sum()),
     "periodo": {"min": str(df["date"].min().date()), "max": str(df["date"].max().date())},
 }
 
@@ -145,7 +155,10 @@ for toks in tokenized:
     for w in set(toks):
         dfreq[w]+=1
 N = len(tokenized)
-vocab = {w:i for i,(w,c) in enumerate(sorted(dfreq.items(), key=lambda x:-x[1])) if 5<=c<=0.6*N}
+vocab = {
+    w:i for i,(w,c) in enumerate(sorted(dfreq.items(), key=lambda x:(-x[1], x[0])))
+    if 5<=c<=0.6*N
+}
 idf = {w: math.log((1+N)/(1+dfreq[w]))+1 for w in vocab}
 
 def vectorize(toks):
@@ -170,7 +183,7 @@ out.to_csv(os.path.join(ROOT,"data","ttw_clean.csv"), index=False)
 # ---------------------------------------------------------------------------
 # 7. activities.json (corpus para retrieval)
 # ---------------------------------------------------------------------------
-valid = df[df["city_clean"].notna() & df["has_description"]].copy()
+valid = df[usable_mask].copy()
 activities = []
 for _, r in valid.iterrows():
     activities.append({
@@ -195,16 +208,21 @@ for city, g in valid.groupby("city_clean"):
         for k,val in v.items(): centroid[int(k)]+=val
     if centroid:
         norm = math.sqrt(sum(x*x for x in centroid.values())) or 1.0
-        centroid = {k: round(v/norm,4) for k,v in sorted(centroid.items(), key=lambda x:-x[1])[:60]}
+        centroid = {
+            k: round(v/norm,4)
+            for k,v in sorted(centroid.items(), key=lambda x:(-x[1], x[0]))[:60]
+        }
+    unique_samples = list(dict.fromkeys(g["_description_clean"].tolist()))
     destinations.append({
         "city": city, "country": COUNTRY.get(city,""), "activities": total,
         "trips": int(g["trip_id"].nunique()),
+        "unique_narratives": len(unique_samples),
         "theme_scores": theme_scores,
         "top_themes": [t for t,_ in theme_counts.most_common(4)],
         "seasonality": seasonality,
         "peak_month": MONTHS_PT[max(range(12), key=lambda i: seasonality[i])] if total else None,
         "centroid": centroid,
-        "samples": g["description"].head(6).tolist(),
+        "samples": unique_samples[:6],
     })
 destinations.sort(key=lambda d:-d["activities"])
 

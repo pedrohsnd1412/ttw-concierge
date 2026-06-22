@@ -101,7 +101,7 @@ function ConciergeInner({ cities }: { cities: { city: string; country: string }[
       {/* Painel de controle */}
       <div className="card h-fit p-7 no-print lg:h-full lg:min-h-0 lg:overflow-y-auto lg:overscroll-contain">
         <p className="eyebrow">Briefing</p>
-        <h2 className="mt-1 font-serif text-2xl text-ivory">Compor roteiro</h2>
+        <h2 className="mt-1 font-sans text-2xl font-medium tracking-tight text-ivory">Compor roteiro</h2>
         <div className="my-5 hairline" />
 
         <label className="eyebrow">Destino</label>
@@ -152,7 +152,7 @@ function ConciergeInner({ cities }: { cities: { city: string; country: string }[
       <div className="lg:h-full lg:min-h-0 lg:overflow-y-auto lg:overscroll-contain lg:pr-2">
         {!result && !loading && (
           <div className="card flex h-full min-h-[400px] flex-col items-center justify-center p-12 text-center lg:min-h-0">
-            <p className="font-serif text-2xl text-ivory/40">A sua proposta aparecerá aqui</p>
+            <p className="font-sans text-2xl font-medium tracking-tight text-ivory/40">A sua proposta aparecerá aqui</p>
             <p className="mt-2 max-w-sm text-sm text-muted">
               Escolha um destino e gere um roteiro construído a partir do histórico real de viagens TTW.
             </p>
@@ -160,7 +160,7 @@ function ConciergeInner({ cities }: { cities: { city: string; country: string }[
         )}
         {loading && (
           <div className="card flex h-full min-h-[400px] items-center justify-center p-12 lg:min-h-0">
-            <p className="animate-pulse font-serif text-xl text-champagne/70">Curando experiências…</p>
+            <p className="animate-pulse font-sans text-xl font-medium text-champagne/70">Curando experiências…</p>
           </div>
         )}
         {result && (
@@ -169,7 +169,7 @@ function ConciergeInner({ cities }: { cities: { city: string; country: string }[
               <div className="flex flex-wrap items-start justify-between gap-4">
                 <div>
                   <p className="eyebrow">Proposta de roteiro</p>
-                  <h2 className="mt-2 font-serif text-3xl text-ivory">
+                  <h2 className="mt-2 font-sans text-3xl font-medium tracking-tight text-ivory">
                     {result.city}
                     <span className="text-champagne">, {result.country}</span>
                   </h2>
@@ -181,7 +181,8 @@ function ConciergeInner({ cities }: { cities: { city: string; country: string }[
               </div>
               <p className="mt-4 text-[15px] leading-relaxed text-ivory/85">{result.intro}</p>
               <p className="mt-3 text-xs text-muted">
-                Baseado em {result.basis} atividades reais registradas para {result.city}.
+                Baseado em {result.basis} registros válidos para {result.city}; narrativas repetidas são removidas
+                da seleção sempre que a base permite.
               </p>
             </div>
 
@@ -190,7 +191,7 @@ function ConciergeInner({ cities }: { cities: { city: string; country: string }[
                 <div key={d.day} className="card p-7">
                   <div className="flex items-center justify-between gap-4">
                     <div className="flex items-center gap-4">
-                      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-champagne/40 font-serif text-lg text-champagne">
+                      <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-champagne/40 font-sans text-lg font-medium text-champagne">
                         {d.day}
                       </div>
                       <div>

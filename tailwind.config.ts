@@ -22,8 +22,7 @@ const config: Config = {
         line: "rgba(194,165,106,0.18)",
       },
       fontFamily: {
-        serif: ["var(--font-serif)", "Georgia", "serif"],
-        sans: ["var(--font-sans)", "system-ui", "sans-serif"],
+        sans: ["var(--font-inter)", "Inter", "system-ui", "sans-serif"],
       },
       letterSpacing: {
         luxe: "0.22em",

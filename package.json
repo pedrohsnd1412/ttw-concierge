@@ -8,6 +8,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "tsc --noEmit",
+    "data:process": ".venv/bin/python scripts/process_data.py",
+    "data:validate": ".venv/bin/python scripts/validate_data.py",
     "seed:supabase": "node scripts/seed_supabase.mjs",
     "ingest:openai": "node scripts/ingest_supabase.mjs"
   },

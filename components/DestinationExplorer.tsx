@@ -30,7 +30,7 @@ export default function DestinationExplorer({
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
         <div>
           <p className="eyebrow">Perfil do destino</p>
-          <h3 className="mt-1 font-serif text-2xl text-ivory">{city}</h3>
+          <h3 className="mt-1 font-sans text-2xl font-medium tracking-tight text-ivory">{city}</h3>
         </div>
         <select
           value={city}
@@ -52,7 +52,7 @@ export default function DestinationExplorer({
         </div>
         <div className="flex flex-col justify-center">
           <p className="mb-3 text-xs uppercase tracking-luxe text-muted">
-            Sazonalidade {season?.peak ? `· pico em ${season.peak}` : ""}
+            Volume mensal {season?.peak ? `· maior registro em ${season.peak}` : ""}
           </p>
           {season && <Heat12 values={season.seasonality} labels={meses} />}
           <div className="mt-6 flex flex-wrap gap-2">

@@ -248,7 +248,7 @@ function explainMatch(d: Destination, matchedThemes: string[], textScore: number
   else if (d.top_themes.length)
     parts.push(`conhecido por ${listToText(d.top_themes.slice(0, 2).map((t) => t.toLowerCase()))}`);
   if (textScore > 0.05) parts.push("alta aderência ao que o cliente descreveu");
-  if (d.peak_month) parts.push(`melhor época em torno de ${d.peak_month}`);
+  if (d.peak_month) parts.push(`maior volume na amostra em ${d.peak_month}`);
   const base = parts.length ? parts.join("; ") : "boa cobertura no histórico TTW";
   return `${d.city} foi sugerido por ser ${base}.`;
 }

@@ -16,8 +16,6 @@ export default function DashboardPage() {
 
   const totalCity = q.city_status as Record<string, number>;
   const resolved = q.linhas_com_destino_resolvido;
-  const noise = q.linhas_totais - resolved;
-
   return (
     <PageShell
       header={
@@ -40,26 +38,27 @@ export default function DashboardPage() {
       {/* Ranking + Temas */}
       <div className="grid gap-6 lg:grid-cols-2">
         <div className="card p-7">
-          <SectionTitle note="atividades na amostra">Destinos mais frequentes</SectionTitle>
+          <SectionTitle note="registros válidos por destino">Destinos mais frequentes</SectionTitle>
           <BarList data={ranking} />
         </div>
         <div className="card p-7">
-          <SectionTitle note="ocorrências nas descrições">Assinatura de experiências</SectionTitle>
+          <SectionTitle note="classificações por palavras-chave">Assinatura de experiências</SectionTitle>
           <BarList data={temas} />
           <p className="mt-5 text-xs leading-relaxed text-muted">
-            Temas extraídos por classificação das narrativas. Gastronomia, arte e história dominam —
-            coerente com um portfólio de viagens culturais e urbanas de alto padrão.
+            Gastronomia, história & cultura e natureza & paisagem aparecem com maior frequência.
+            Uma mesma atividade pode receber vários temas; os totais, portanto, não são mutuamente exclusivos.
           </p>
         </div>
       </div>
 
       {/* Sazonalidade global */}
       <div className="mt-6 card p-7">
-        <SectionTitle note="distribuição por mês (todas as viagens)">Sazonalidade global</SectionTitle>
+        <SectionTitle note="atividades por mês · 5.000 linhas">Sazonalidade global</SectionTitle>
         <Heat12 values={insights.sazonalidade_global} labels={insights.meses_label} />
         <p className="mt-5 text-xs leading-relaxed text-muted">
-          Concentração no meio do ano e na virada — janelas naturais de férias do viajante brasileiro.
-          Útil para antecipar oferta, equipe e parcerias hoteleiras por temporada.
+          A distribuição é relativamente uniforme: fevereiro tem 447 registros, julho 438 e setembro 399.
+          A amostra não sustenta uma concentração sazonal forte; os picos por destino devem ser lidos como volume
+          observado, não como recomendação automática de melhor época.
         </p>
       </div>
 
@@ -77,7 +76,7 @@ export default function DashboardPage() {
         <div className="card p-7">
           <SectionTitle>Duração & perfil de viagem</SectionTitle>
           <p className="text-sm leading-relaxed text-ivory/80">
-            Na amostra de 5.000 linhas, {insights.duracao.distribuicao["1"]?.toLocaleString("pt-BR")} viagens
+            Na amostra de {k.atividades.toLocaleString("pt-BR")} linhas, {insights.duracao.distribuicao["1"]?.toLocaleString("pt-BR")} viagens
             aparecem com 1 dia e {insights.duracao.distribuicao["2"]?.toLocaleString("pt-BR")} com 2 dias —
             média de <span className="text-champagne">{insights.duracao.media_dias_amostra}</span> dias amostrados
             por viagem.
@@ -93,16 +92,21 @@ export default function DashboardPage() {
           <SectionTitle note="governança de dados">Qualidade da base</SectionTitle>
           <div className="space-y-3 text-sm">
             <QualityRow label="Destino resolvido" value={`${resolved.toLocaleString("pt-BR")} (${Math.round((resolved / q.linhas_totais) * 100)}%)`} good />
+            <QualityRow label="Utilizáveis nas recomendações" value={`${q.linhas_utilizaveis.toLocaleString("pt-BR")} (${q.pct_linhas_utilizaveis}%)`} good />
             <QualityRow label="Já limpos" value={(totalCity["limpo"] || 0).toLocaleString("pt-BR")} />
             <QualityRow label="Normalizados (caixa, check-in, combos)" value={(totalCity["normalizado"] || 0).toLocaleString("pt-BR")} />
             <QualityRow label="Marcadores operacionais (Free Day, Wedding…)" value={(totalCity["marcador_operacional"] || 0).toString()} warn />
             <QualityRow label="Em navegação (cruzeiros)" value={(totalCity["em_navegacao"] || 0).toString()} warn />
             <QualityRow label="Cidade não reconhecida" value={(totalCity["desconhecido"] || 0).toString()} warn />
             <QualityRow label="Descrições vazias" value={`${q.descricoes_vazias} (${q.pct_descricoes_vazias}%)`} warn />
+            <QualityRow label="Narrativas distintas após limpeza" value={q.narrativas_distintas.toLocaleString("pt-BR")} warn />
+            <QualityRow label="Descrições com marcação HTML" value={q.descricoes_com_html.toLocaleString("pt-BR")} warn />
           </div>
           <p className="mt-5 text-xs leading-relaxed text-muted">
             O campo <code className="text-champagne/80">city</code> mistura cidade, etapa operacional e estado da viagem.
-            A solução consolidou 186 variações em 20 destinos e separou ruído de sinal — pré-requisito para qualquer IA confiável em cima da base.
+            A solução consolidou 186 variações em 20 destinos. Há forte repetição textual: as 4.750 descrições
+            preenchidas representam 73 narrativas distintas após a remoção de HTML. Por isso, frequências mostram
+            volume de registros, não variedade de experiências.
           </p>
         </div>
       </div>

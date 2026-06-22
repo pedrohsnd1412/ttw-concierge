@@ -46,7 +46,7 @@ function LoginInner() {
         </div>
         <div className="card p-10">
           <p className="eyebrow text-center">Acesso exclusivo · Consultores</p>
-          <h1 className="mt-3 text-center font-serif text-3xl text-ivory">Bem-vindo de volta</h1>
+          <h1 className="mt-3 text-center font-sans text-3xl font-medium text-ivory">Bem-vindo de volta</h1>
           <p className="mt-2 text-center text-sm text-muted">
             A inteligência de roteiros da TTW, em um só lugar.
           </p>

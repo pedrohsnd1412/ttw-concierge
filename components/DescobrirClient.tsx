@@ -82,7 +82,7 @@ export default function DescobrirClient() {
       <div className="lg:h-full lg:min-h-0 lg:overflow-y-auto lg:overscroll-contain lg:pr-2">
         {!results && !loading && (
           <div className="card flex h-full min-h-[400px] flex-col items-center justify-center p-12 text-center lg:min-h-0">
-            <p className="font-serif text-2xl text-ivory/40">As recomendações aparecerão aqui</p>
+            <p className="font-sans text-2xl font-medium tracking-tight text-ivory/40">As recomendações aparecerão aqui</p>
             <p className="mt-2 max-w-sm text-sm text-muted">
               Descreva o perfil do cliente para comparar suas preferências com a assinatura real dos destinos.
             </p>
@@ -91,27 +91,27 @@ export default function DescobrirClient() {
 
         {loading && (
           <div className="card flex h-full min-h-[400px] items-center justify-center p-12 lg:min-h-0">
-            <p className="animate-pulse font-serif text-xl text-champagne/70">Comparando destinos…</p>
+            <p className="animate-pulse font-sans text-xl font-medium text-champagne/70">Comparando destinos…</p>
           </div>
         )}
 
         {results && (
           <div className="fadeup">
-          <p className="eyebrow mb-4">Destinos recomendados · por aderência ao perfil</p>
+          <p className="eyebrow mb-4">Destinos recomendados · índice comparativo desta busca</p>
           <div className="grid gap-5">
             {results.map((r, i) => (
               <div key={r.city} className="card p-7">
                 <div className="flex items-start justify-between">
                   <div>
-                    <p className="eyebrow">#{i + 1} · {Math.round((r.score / maxScore) * 100)}% de aderência</p>
-                    <h3 className="mt-1 font-serif text-2xl text-ivory">
+                    <p className="eyebrow">#{i + 1} · índice {Math.round((r.score / maxScore) * 100)}</p>
+                    <h3 className="mt-1 font-sans text-2xl font-medium tracking-tight text-ivory">
                       {r.city}
                       <span className="text-champagne">, {r.country}</span>
                     </h3>
                   </div>
                   {r.peak_month && (
                     <span className="rounded-full border border-line px-3 py-1 text-xs text-muted">
-                      pico · {r.peak_month}
+                      mais registros · {r.peak_month}
                     </span>
                   )}
                 </div>
@@ -151,6 +151,9 @@ export default function DescobrirClient() {
               </div>
             ))}
           </div>
+          <p className="mt-4 text-xs leading-relaxed text-muted">
+            O índice é relativo ao destino mais aderente desta busca; não representa probabilidade nem percentual absoluto.
+          </p>
           </div>
         )}
       </div>
