@@ -18,6 +18,9 @@ async function expectedToken(): Promise<string> {
 export async function proxy(req: NextRequest) {
   const token = req.cookies.get("ttw_session")?.value;
   if (token && token === (await expectedToken())) return NextResponse.next();
+  if (req.nextUrl.pathname.startsWith("/api/")) {
+    return NextResponse.json({ error: "Não autorizado." }, { status: 401 });
+  }
   const url = req.nextUrl.clone();
   url.pathname = "/login";
   url.searchParams.set("next", req.nextUrl.pathname);
@@ -25,5 +28,11 @@ export async function proxy(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/concierge/:path*", "/descobrir/:path*"],
+  matcher: [
+    "/dashboard/:path*",
+    "/concierge/:path*",
+    "/descobrir/:path*",
+    "/api/concierge/:path*",
+    "/api/match",
+  ],
 };
