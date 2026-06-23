@@ -9,9 +9,16 @@ export function expectedToken(): string {
   return crypto.createHmac("sha256", secret).update("ttw-authenticated").digest("hex");
 }
 
+/** Comparação de tempo constante (evita timing attack na checagem de senha). */
+function safeEqual(a: string, b: string): boolean {
+  const ha = crypto.createHash("sha256").update(a).digest();
+  const hb = crypto.createHash("sha256").update(b).digest();
+  return crypto.timingSafeEqual(ha, hb);
+}
+
 export function checkCredentials(email: string, password: string): boolean {
   const u = process.env.TTW_USER;
   const p = process.env.TTW_PASSWORD;
   if (!u || !p) return false;
-  return email.trim().toLowerCase() === u.toLowerCase() && password === p;
+  return email.trim().toLowerCase() === u.toLowerCase() && safeEqual(password, p);
 }

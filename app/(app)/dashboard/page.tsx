@@ -13,6 +13,7 @@ export default function DashboardPage() {
   const temas = insights.temas_globais
     .slice(0, 10)
     .map((t) => ({ label: t.theme, value: t.count }));
+  const anos = insights.por_ano.map((y) => ({ label: y.ano, value: y.count }));
 
   const totalCity = q.city_status as Record<string, number>;
   const resolved = q.linhas_com_destino_resolvido;
@@ -35,8 +36,36 @@ export default function DashboardPage() {
         </div>
       }
     >
+      {/* Leia primeiro — síntese executiva em linguagem de negócio */}
+      <div className="card border-champagne/25 p-7">
+        <SectionTitle note="3 leituras de negócio">Leia primeiro</SectionTitle>
+        <div className="grid gap-5 md:grid-cols-3">
+          <div>
+            <p className="font-sans text-lg font-medium text-champagne">20 destinos concentram tudo</p>
+            <p className="mt-1 text-sm leading-relaxed text-ivory/75">
+              Europa e EUA dominam o histórico, em volume equilibrado entre as cidades — a base é
+              consistente para sustentar recomendações nesses destinos.
+            </p>
+          </div>
+          <div>
+            <p className="font-sans text-lg font-medium text-champagne">Registra volume, não variedade</p>
+            <p className="mt-1 text-sm leading-relaxed text-ivory/75">
+              As descrições seguem ~73 narrativas-modelo que se repetem. Excelente para o tom da casa;
+              por isso o Concierge limita cada roteiro às experiências realmente distintas do destino.
+            </p>
+          </div>
+          <div>
+            <p className="font-sans text-lg font-medium text-champagne">Demanda estável o ano todo</p>
+            <p className="mt-1 text-sm leading-relaxed text-ivory/75">
+              Não há alta/baixa temporada forte na amostra. E 94% das linhas têm destino resolvido após a
+              limpeza — base pronta para uso, com o ruído tratado de forma documentada.
+            </p>
+          </div>
+        </div>
+      </div>
+
       {/* Ranking + Temas */}
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="mt-6 grid gap-6 lg:grid-cols-2">
         <div className="card p-7">
           <SectionTitle note="registros válidos por destino">Destinos mais frequentes</SectionTitle>
           <BarList data={ranking} />
@@ -59,6 +88,16 @@ export default function DashboardPage() {
           A distribuição é relativamente uniforme: fevereiro tem 447 registros, julho 438 e setembro 399.
           A amostra não sustenta uma concentração sazonal forte; os picos por destino devem ser lidos como volume
           observado, não como recomendação automática de melhor época.
+        </p>
+      </div>
+
+      {/* Volume por ano */}
+      <div className="mt-6 card p-7">
+        <SectionTitle note="linhas registradas por ano · amostra">Volume por ano</SectionTitle>
+        <BarList data={anos} />
+        <p className="mt-5 text-xs leading-relaxed text-muted">
+          A amostra cobre 2018–2023 com volume estável entre os anos — sem tendência forte de crescimento
+          ou queda. Leitura: a base é um recorte equilibrado no tempo, não uma série para projeção de demanda.
         </p>
       </div>
 
@@ -90,6 +129,10 @@ export default function DashboardPage() {
         </div>
         <div className="card p-7">
           <SectionTitle note="governança de dados">Qualidade da base</SectionTitle>
+          <p className="mb-4 text-sm leading-relaxed text-ivory/85">
+            <span className="text-champagne">94% das linhas com destino resolvido</span> e o ruído tratado de
+            forma documentada — base pronta para uso. Abaixo, o detalhe de cada decisão.
+          </p>
           <div className="space-y-3 text-sm">
             <QualityRow label="Destino resolvido" value={`${resolved.toLocaleString("pt-BR")} (${Math.round((resolved / q.linhas_totais) * 100)}%)`} good />
             <QualityRow label="Utilizáveis nas recomendações" value={`${q.linhas_utilizaveis.toLocaleString("pt-BR")} (${q.pct_linhas_utilizaveis}%)`} good />

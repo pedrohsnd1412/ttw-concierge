@@ -15,6 +15,7 @@ export type Activity = {
 };
 export type Destination = {
   city: string; country: string; activities: number; trips: number;
+  unique_narratives: number;
   theme_scores: Record<string, number>; top_themes: string[];
   seasonality: number[]; peak_month: string | null;
   centroid: Record<string, number>; samples: string[];
@@ -95,7 +96,7 @@ export type ConciergeDay = {
 };
 export type ConciergeResult = {
   city: string; country: string; days: ConciergeDay[];
-  intro: string; basis: number; preferences: string[];
+  intro: string; basis: number; themes: string[];
 };
 
 export function buildItinerary(
@@ -114,7 +115,9 @@ export function buildItinerary(
   const scored = pool
     .map((a) => ({ a, score: qvec ? cosine(qvec, a.vec) : Math.random() * 0.001 }))
     .filter((x) => {
-      const key = x.a.text.slice(0, 80);
+      // deduplica pela narrativa LIMPA (sem HTML): a mesma narrativa não pode
+      // reaparecer só porque existe uma variante com marcação.
+      const key = cleanActivityText(x.a.text).slice(0, 80);
       if (seen.has(key)) return false;
       seen.add(key);
       return true;
@@ -143,8 +146,11 @@ export function buildItinerary(
   picked.forEach((p, i) => (p.day = i + 1));
 
   const country = dest?.country || "";
-  const intro = composeIntro(city, country, nDays, [...usedThemes]);
-  return { city, country, days: picked, intro, basis: pool.length, preferences: themes };
+  // o roteiro só pode ter tantos dias quanto há narrativas distintas no destino:
+  // o intro reflete o número REAL de dias entregues, sem prometer mais.
+  const realDays = picked.length;
+  const intro = composeIntro(city, country, realDays, [...usedThemes]);
+  return { city, country, days: picked, intro, basis: pool.length, themes };
 }
 
 /** Retorna uma alternativa de dia para o destino, evitando os já usados. */
@@ -159,11 +165,16 @@ export function pickAlternativeDay(
 
   const queryText = [preferences, ...themes.map((t) => THEME_KEYWORDS[t] || "")].join(" ").trim();
   const qvec = queryText ? vectorizeQuery(queryText) : null;
-  const seen = new Set<string>();
+  // evita devolver a MESMA narrativa de um dia já exibido (mesmo que sob outro id/variante HTML)
+  const seen = new Set<string>(
+    activities
+      .filter((a) => exclude.has(a.id))
+      .map((a) => cleanActivityText(a.text).slice(0, 80))
+  );
   const scored = pool
     .map((a) => ({ a, score: qvec ? cosine(qvec, a.vec) : Math.random() }))
     .filter((x) => {
-      const k = x.a.text.slice(0, 80);
+      const k = cleanActivityText(x.a.text).slice(0, 80);
       if (seen.has(k)) return false;
       seen.add(k);
       return true;
@@ -223,7 +234,7 @@ export function discoverDestinations(
       .map((a) => ({ a, s: cosine(qvec, a.vec) }))
       .sort((x, y) => y.s - x.s)
       .filter((x) => {
-        const k = x.a.text.slice(0, 60);
+        const k = cleanActivityText(x.a.text).slice(0, 60);
         if (seen.has(k)) return false;
         seen.add(k);
         return true;

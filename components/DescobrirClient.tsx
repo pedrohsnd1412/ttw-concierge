@@ -97,13 +97,13 @@ export default function DescobrirClient() {
 
         {results && (
           <div className="fadeup">
-          <p className="eyebrow mb-4">Destinos recomendados · índice comparativo desta busca</p>
+          <p className="eyebrow mb-4">Destinos recomendados · quanto cada um combina com o perfil</p>
           <div className="grid gap-5">
             {results.map((r, i) => (
               <div key={r.city} className="card p-7">
                 <div className="flex items-start justify-between">
                   <div>
-                    <p className="eyebrow">#{i + 1} · índice {Math.round((r.score / maxScore) * 100)}</p>
+                    <p className="eyebrow">#{i + 1} · aderência ao perfil {Math.round((r.score / maxScore) * 100)}/100</p>
                     <h3 className="mt-1 font-sans text-2xl font-medium tracking-tight text-ivory">
                       {r.city}
                       <span className="text-champagne">, {r.country}</span>
@@ -143,7 +143,7 @@ export default function DescobrirClient() {
                 )}
 
                 <Link
-                  href={`/concierge?city=${encodeURIComponent(r.city)}&prefs=${encodeURIComponent(prefs)}&themes=${encodeURIComponent(sel.join(","))}`}
+                  href={`/concierge?city=${encodeURIComponent(r.city)}&themes=${encodeURIComponent(sel.join(","))}`}
                   className="btn-ghost mt-6 w-full"
                 >
                   Montar roteiro deste destino →
@@ -152,7 +152,8 @@ export default function DescobrirClient() {
             ))}
           </div>
           <p className="mt-4 text-xs leading-relaxed text-muted">
-            O índice é relativo ao destino mais aderente desta busca; não representa probabilidade nem percentual absoluto.
+            A aderência é relativa ao destino que mais combina com este perfil (o topo desta busca = 100);
+            não é probabilidade nem percentual absoluto.
           </p>
           </div>
         )}

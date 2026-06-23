@@ -3,7 +3,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { Radar, Heat12 } from "./charts";
 
-type Perfil = { city: string; theme_scores: Record<string, number>; top_themes: string[] };
+type Perfil = { city: string; theme_scores: Record<string, number>; top_themes: string[]; unique_narratives?: number };
 type Sazon = { city: string; seasonality: number[]; peak: string | null };
 
 export default function DestinationExplorer({
@@ -49,10 +49,15 @@ export default function DestinationExplorer({
         <div>
           <p className="mb-2 text-xs uppercase tracking-luxe text-muted">Assinatura de experiências</p>
           <Radar data={radarAxes} />
+          {perfil?.unique_narratives != null && (
+            <p className="mt-3 text-center text-xs text-muted">
+              Assinatura baseada em {perfil.unique_narratives} narrativas distintas — leitura de perfil, não de estatística robusta.
+            </p>
+          )}
         </div>
         <div className="flex flex-col justify-center">
           <p className="mb-3 text-xs uppercase tracking-luxe text-muted">
-            Volume mensal {season?.peak ? `· maior registro em ${season.peak}` : ""}
+            Volume mensal {season?.peak ? `· mais registros em ${season.peak} (dentro do ruído da amostra)` : ""}
           </p>
           {season && <Heat12 values={season.seasonality} labels={meses} />}
           <div className="mt-6 flex flex-wrap gap-2">

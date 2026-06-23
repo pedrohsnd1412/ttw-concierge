@@ -49,6 +49,10 @@ def resolve_city(raw):
     if not isinstance(raw, str) or not raw.strip():
         return None, "vazio"
     s = strip_accents(raw.strip().lower())
+    # NB: linhas com city == "01 Ingresso Disney World - Data Fixa" são ruído de
+    # bilheteria — a narrativa real é de OUTRAS cidades (Londres, Cairo, Madri…),
+    # não de Orlando. Por isso NÃO mapeamos para Orlando; ficam como desconhecido
+    # (destino verdadeiro só existe no texto livre, de forma ambígua).
     s = re.sub(r"^\d+[ºo]?\s*dia\s*[-–]?\s*", "", s)      # "2 Dia - Madrid"
     s = re.sub(r"^check[- ]?in\s+(em\s+)?", "", s)         # "Check-in Lisboa"
     s = re.sub(r"^chegada e check[- ]?in\s+(em\s+)?", "", s)
@@ -73,10 +77,11 @@ def resolve_city(raw):
 # ---------------------------------------------------------------------------
 THEMES = {
     "Gastronomia":      ["jantar","almoco","restaurante","gastronom","degustac","vinho","queijo","prato","culinar","frutos do mar","cafe da manha","mercado gastron","bistro","tapas","trattoria"],
-    "Arte & Museus":    ["museu","galeria","arte","exposic","pinacoteca","obras","escultura","picasso","van gogh","louvre"],
+    "Arte & Museus":    ["museu","galeria","galleria","accademia","arte","exposic","pinacoteca","obras","escultura","picasso","van gogh","louvre","michelangelo","david de michelangelo","uffizi"],
     "História & Cultura":["histor","ruina","templo","igreja","catedral","palacio","castelo","forum","antig","monumento","mesquita","basilica","piramide","acropole","coliseu","medieval"],
     "Natureza & Paisagem":["parque","jardim","montanha","lago","rio","natureza","mirante","vista","deserto","safari","oasis","gruta","cascata"],
-    "Praia & Mar":      ["praia","mar ","barco","baia","marina","cruzeiro","navegac","iate","costa","ilha","litoral"],
+    # nota: "mar " removido — só capturava "frutos do mar" (gastronomia), inflando Praia & Mar.
+    "Praia & Mar":      ["praia","barco","baia","marina","cruzeiro","navegac","iate","costa","ilha","litoral"],
     "Compras":          ["compras","boutique","loja","shopping","outlet","mercado"],
     "Vida Noturna":     ["vida noturna","balada","noite","bar ","pub","show","espetaculo","tango"],
     "Romance":          ["romantic","por do sol","casal","lua de mel","gondola","intimo"],
@@ -121,7 +126,8 @@ df["city_clean"] = res.apply(lambda x: x[0])
 df["city_status"] = res.apply(lambda x: x[1])
 df["has_description"] = df["description"].notna() & (df["description"].str.strip().str.len() > 0)
 df["_description_clean"] = df["description"].apply(clean_description)
-df["themes"] = df["description"].apply(tag_themes)
+# tematiza sobre o texto já limpo (sem HTML), para não depender de marcação na narrativa
+df["themes"] = df["_description_clean"].apply(tag_themes)
 df["year"] = df["date"].dt.year
 df["month"] = df["date"].dt.month
 usable_mask = df["city_clean"].notna() & df["has_description"]
@@ -189,7 +195,7 @@ for _, r in valid.iterrows():
     activities.append({
         "id": r["id"], "trip_id": r["trip_id"], "city": r["city_clean"],
         "country": COUNTRY.get(r["city_clean"],""), "month": int(r["month"]) if pd.notna(r["month"]) else None,
-        "themes": r["themes"], "text": r["description"].strip(), "vec": r["_vec"],
+        "themes": r["themes"], "text": r["_description_clean"], "vec": r["_vec"],
     })
 
 # ---------------------------------------------------------------------------
@@ -254,7 +260,7 @@ insights = {
     },
     "por_ano": [{"ano":str(y),"count":year_counts.get(y,0)} for y in sorted(year_counts)],
     "sazonalidade_por_destino": [{"city":d["city"],"seasonality":d["seasonality"],"peak":d["peak_month"]} for d in destinations],
-    "perfil_por_destino": [{"city":d["city"],"theme_scores":d["theme_scores"],"top_themes":d["top_themes"]} for d in destinations],
+    "perfil_por_destino": [{"city":d["city"],"theme_scores":d["theme_scores"],"top_themes":d["top_themes"],"unique_narratives":d["unique_narratives"]} for d in destinations],
 }
 
 # ---------------------------------------------------------------------------

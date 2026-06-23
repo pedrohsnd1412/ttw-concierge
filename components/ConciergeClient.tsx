@@ -5,8 +5,9 @@ import { THEMES } from "./themes";
 
 type Day = { day: number; sourceId: string; tripId: string; themes: string[]; text: string };
 type Result = { city: string; country: string; intro: string; days: Day[]; basis: number };
+type City = { city: string; country: string; maxDays: number };
 
-export default function ConciergeClient({ cities }: { cities: { city: string; country: string }[] }) {
+export default function ConciergeClient({ cities }: { cities: City[] }) {
   return (
     <Suspense>
       <ConciergeInner cities={cities} />
@@ -14,10 +15,16 @@ export default function ConciergeClient({ cities }: { cities: { city: string; co
   );
 }
 
-function ConciergeInner({ cities }: { cities: { city: string; country: string }[] }) {
+function ConciergeInner({ cities }: { cities: City[] }) {
   const params = useSearchParams();
   const [city, setCity] = useState(cities[0]?.city || "");
   const [days, setDays] = useState(3);
+  // teto honesto: o histórico do destino só comporta tantos dias distintos quanto
+  // há narrativas distintas. O slider e o valor são limitados a esse número.
+  const maxDays = Math.max(1, cities.find((c) => c.city === city)?.maxDays ?? 7);
+  useEffect(() => {
+    setDays((d) => Math.min(d, maxDays));
+  }, [maxDays]);
   const [sel, setSel] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [swapping, setSwapping] = useState<number | null>(null);
@@ -112,10 +119,13 @@ function ConciergeInner({ cities }: { cities: { city: string; country: string }[
 
         <label className="eyebrow mt-5 block">Dias de roteiro · {days}</label>
         <input
-          type="range" min={1} max={7} value={days}
+          type="range" min={1} max={maxDays} value={days}
           onChange={(e) => setDays(Number(e.target.value))}
           className="mt-3 w-full accent-[#C2A56A]"
         />
+        <p className="mt-2 text-xs text-muted">
+          O histórico de {city} comporta {maxDays} {maxDays > 1 ? "dias distintos" : "dia distinto"} sem repetir experiências.
+        </p>
 
         <label className="eyebrow mt-5 block">Tons da viagem</label>
         <div className="mt-3 flex flex-wrap gap-2">
@@ -208,7 +218,7 @@ function ConciergeInner({ cities }: { cities: { city: string; country: string }[
             </div>
 
             <p className="mt-5 text-center text-xs text-muted/70 no-print">
-              Roteiro montado por retrieval do histórico real — sem invenção de locais. Use “Trocar” para variar um dia.
+              Roteiro montado a partir de roteiros reais já vividos por viajantes TTW — sem inventar locais. Use “Trocar” para variar um dia.
             </p>
           </div>
         )}

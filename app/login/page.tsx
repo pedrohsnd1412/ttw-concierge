@@ -30,7 +30,10 @@ function LoginInner() {
     });
     setLoading(false);
     if (res.ok) {
-      router.push(params.get("next") || "/dashboard");
+      // só aceita caminho interno em `next` (evita open-redirect)
+      const next = params.get("next");
+      const dest = next && next.startsWith("/") && !next.startsWith("//") ? next : "/dashboard";
+      router.push(dest);
       router.refresh();
     } else {
       const d = await res.json().catch(() => ({}));
@@ -78,6 +81,11 @@ function LoginInner() {
               {loading ? "Entrando…" : "Entrar"}
             </button>
           </form>
+          {process.env.NEXT_PUBLIC_DEMO_CRED && (
+            <p className="mt-6 rounded-lg border border-line/60 bg-surface/40 px-4 py-3 text-center text-xs text-muted">
+              Acesso de demonstração · <span className="text-champagne/90">{process.env.NEXT_PUBLIC_DEMO_CRED}</span>
+            </p>
+          )}
         </div>
         <p className="mt-8 text-center text-[10px] uppercase tracking-luxe text-muted/50">
           TTW Group · Travel The World

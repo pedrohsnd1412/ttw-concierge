@@ -20,9 +20,11 @@ const supabaseSecret = () =>
   process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 export function isSupabaseEnabled(): boolean {
-  return Boolean(
-    process.env.NEXT_PUBLIC_SUPABASE_URL && supabaseSecret()
-  );
+  // Opt-in EXPLÍCITO: o caminho de produção (pgvector) só é usado quando
+  // USE_SUPABASE=1 está definido. Assim a demo/local roda 100% no índice local
+  // (instantâneo), sem pagar uma ida à rede a cada geração de roteiro.
+  const optIn = process.env.USE_SUPABASE === "1" || process.env.USE_SUPABASE === "true";
+  return Boolean(optIn && process.env.NEXT_PUBLIC_SUPABASE_URL && supabaseSecret());
 }
 
 let _client: SupabaseClient | null = null;
@@ -161,9 +163,9 @@ export async function buildSupabaseItinerary(
     city,
     country,
     days: picked,
-    intro: composeIntro(city, country, nDays, [...usedThemes]),
+    intro: composeIntro(city, country, picked.length, [...usedThemes]),
     basis: await activityCount(city),
-    preferences: themes,
+    themes,
   };
 }
 

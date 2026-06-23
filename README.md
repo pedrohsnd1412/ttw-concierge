@@ -1,5 +1,21 @@
 # TTW Concierge — Plataforma de Inteligência de Roteiros
 
+> **Demo ao vivo:** _(adicionar URL da Vercel aqui após o deploy)_ · acesso: `consultor@ttw.com` / senha demo exibida na tela de login.
+
+## TL;DR — decisões e por quê (leia isto primeiro)
+
+O case é avaliado pelo **raciocínio com dados imperfeitos** e pela **comunicação para um time não técnico**. As cinco decisões que guiaram a solução:
+
+1. **O dado é o desafio, não a IA.** O campo `city` mistura cidade, etapa e estado da viagem (186 valores). Normalizei para **20 destinos canônicos** com regras documentadas e auditáveis (caixa, acentos, `Check-in…`, `2º Dia -…`, combos `São Paulo / Istambul`, marcadores `Free Day`, cruzeiros). Resultado: **94% das linhas com destino resolvido**.
+2. **A descoberta que muda o produto:** são 5.000 linhas, mas apenas **73 narrativas distintas** — as descrições são modelos que se repetem (a mais comum aparece **100×**). Implicação: a base entrega **tom e volume, não variedade fina**. Por isso o Concierge **limita cada roteiro ao número real de experiências distintas do destino** em vez de prometer 7 dias e repetir.
+3. **IA sem alucinação:** uso **retrieval** (busca por similaridade no histórico real), não geração livre — uma agência de luxo não pode inventar lugares. Índice **TF-IDF local** (100% offline), com caminho opcional de produção em **pgvector** (Supabase).
+4. **Honestidade acima de vaidade:** a sazonalidade é quase plana e a duração das viagens está subamostrada — sinalizo isso **no próprio dashboard**, em vez de inventar tendências.
+5. **Comunicação para não-técnicos:** tudo em linguagem de negócio, com o **porquê** em cada recomendação e a qualidade da base apresentada como confiança, não como diagnóstico cru.
+
+**Entregáveis:** Desafio 1 → `/concierge` (roteiros no tom TTW). Desafio 2 → `/dashboard` (inteligência de destinos). Bônus → `/descobrir` (gostos do cliente → destino ideal).
+
+---
+
 Plataforma interna para a equipe de consultores TTW, construída em Next.js + React
 com uma experiência visual alinhada ao turismo de alto luxo:
 
@@ -104,12 +120,12 @@ scripts/
   process_data.py        # pipeline de tratamento da base
   ingest_supabase.mjs    # ingestão de embeddings (produção)
 supabase/schema.sql      # esquema pgvector + RPC
-middleware.ts            # proteção de rotas por sessão
+proxy.ts                 # proteção de rotas por sessão (middleware do Next 16)
 ```
 
-**Stack:** Next.js 14 (App Router) · React · TypeScript · Tailwind · Supabase/pgvector (opcional).
-Autenticação por cookie de sessão assinado (HMAC) protegendo as rotas via middleware — em
-produção, migrar para Supabase Auth.
+**Stack:** Next.js 16 (App Router) · React 19 · TypeScript · Tailwind · Supabase/pgvector (opcional).
+Autenticação por cookie de sessão assinado (HMAC) protegendo as rotas via `proxy.ts` (middleware do
+Next 16) — em produção, migrar para Supabase Auth.
 
 ### Regenerar os artefatos de dados
 ```bash
