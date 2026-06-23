@@ -19,28 +19,33 @@ Recebi uma amostra de **5.000 linhas** de um histórico com dados de atividades 
 Site deles: https://ttwgroup.com/pt/home
 
 
-### **2.1. Antes de tudo, meu radar com de processos ETL em grandes bases de dados logo confirmou as diversas inconsistências na base.** 
+### **2.1. Antes de tudo, meu radar com de processos ETL em grandes bases de dados logo confirmou as diversas inconsistências na base** 
 
 Abri o CSV e constatei o seguinte: 186 valores diferentes no campo de cidade, 5% de descrições vazias, HTML no meio do texto. Montei um pipeline em Python que normaliza tudo de forma **documentada e auditável** — 186 cidades viram **20 destinos canônicos**, com cada decisão registrada num relatório de qualidade. Cheguei a **94% das linhas com destino resolvido**.
 
 
-### **2.2. Achei o fato que mudou o produto.** 
+### **2.2. Achei o fato que mudou o produto** 
+
 Ao deduplicar as descrições, descobri que as ~4.750 narrativas preenchidas são, na verdade, **73 textos distintos** (o mais comum se repete 100×). A base tem **tom e volume, não variedade**. Isso definiu todo o resto: o Concierge nunca promete mais dias do que há experiências realmente distintas, e o dashboard trata essa repetição como insight — não como defeito escondido.
 
 
-### **2.3. Desafio 1 — o Concierge.**
+### **2.3. Desafio 1 — o Concierge**
+
 Em vez de pedir para uma IA inventar lugares (inaceitável para uma marca de luxo), fiz **busca por similaridade no histórico real** (TF-IDF + cosseno) e recombino experiências que de fato aconteceram. Deduplico pela narrativa limpa, diversifico por tema e componho a introdução no tom TTW. O consultor escolhe destino, dias e tons, troca um dia se quiser e copia/imprime a proposta.
 
 
-### **2.4. Desafio 2 — a Inteligência de destinos.**
+### **2.4. Desafio 2 — a Inteligência de destinos**
+
 Um dashboard que responde perguntas de negócio, não só conta linhas: para onde se viaja, **quem lidera cada experiência** (matriz destino × tema), quando, a tendência por destino e — com honestidade — o que a base *não* sustenta (sazonalidade fraca, duração subamostrada). A qualidade do dado aparece como confiança, não como diagnóstico cru.
 
 
-###**2.5. O Bônus — Descobrir Destino.**
+### **2.5. O Bônus — Descobrir Destino**
+
 O consultor descreve o cliente e a plataforma recomenda o destino mais aderente, sempre com o **porquê** e as experiências reais que combinam.
 
 
-###**2.6. Empacotei e revisei.**
+### **2.6. Empacotei e revisei.**
+
 Dei à ferramenta uma cara de produto de luxo (carvão + dourado champagne), coloquei login, deixei responsiva e publiquei na Vercel. No fim, fiz uma **revisão crítica da minha própria solução** contra os critérios do case e corrigi o que encontrei — repetição de dias, um slider que prometia mais do que a base entrega, jargão nas telas, latência desnecessária — validando cada ajuste na versão publicada.
 
 
