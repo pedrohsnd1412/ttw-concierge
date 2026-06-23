@@ -1,18 +1,24 @@
-# TTW Concierge — Plataforma de Inteligência de Roteiros
+# Desafio TTW Concierge — Plataforma de Inteligência de Roteiros
 
-> **Acesse o app:** **https://ttw-concierge.vercel.app** · login `consultor@ttw.com` (a senha de demonstração aparece na própria tela). Não precisa instalar nada — roda 100% online.
+> **MVP da Solução:**
+> **https://ttw-concierge.vercel.app**
+>  · Login `consultor@ttw.com` (a senha de demonstração aparece na tela do app). Não precisa instalar nada — roda 100% online.
 
-Este é o meu case técnico para a TTW. Escrevi este README como um **relato**, em primeira pessoa e na ordem em que as coisas aconteceram, porque o que mais importava no case não era a solução pronta — e sim **como eu raciocino com dados imperfeitos e comunico para um time não técnico**.
+Este é o meu case técnico para a TTW. Escrevi este README como um **relato**,
 
-## O ponto de partida
+## 1. O ponto de partida
 
-Recebi uma amostra de **5.000 linhas** de um histórico real de roteiros de luxo: uma linha por dia de viagem, com a narrativa do dia e a cidade — esta última cheia de ruído. O pedido tinha duas frentes: **(1)** sugerir roteiros para um destino a partir desse histórico, no tom da casa, e **(2)** extrair o que a base revela sobre destinos e comportamento de viagem. A frase do case que ficou comigo foi *"dados imperfeitos, prontos para quem sabe trabalhar com eles"* — então tratei o **dado** como o verdadeiro desafio, não a IA.
+Recebi uma amostra de **5.000 linhas** de um histórico com dados de atividades sintéticos de roteiros de luxo. O pedido tinha duas frentes: **(1)** sugerir roteiros para um destino a partir desse histórico, no tom TTW - logo tivei a ideia de construir um app sofisticado, e **(2)** extrair o que a base revela sobre destinos e comportamento de viagem. 
 
-## Como trabalhei: entender e repartir em partes
+## Como trabalhei: entender o desafio e repartir em partes
 
-Em vez de sair codando a feature mais vistosa, fui **incremental** — e boa parte da construção foi conduzida num fluxo assistido por IA, dirigindo e validando cada etapa: primeiro entendi o problema, depois o reparti em pedaços e só avançava para o próximo quando o anterior estava de pé. A ordem foi essa:
+- Em vez de sair codando a feature atrás de feature, fui **incrementando passo a passo**: primeiro entendi o problema, depois utilizei o CLaude Cowork no modo Projeto com o seguinte contexto: "Estou participando de um processo seletivo na empresa TTW - empresa de turismo de luxo com mais de 30 anos de mercado e atuação global. Para a seguinte vaga: 'Estamos expandindo nossa área de tecnologia e identifiquei que seu perfil pode ter aderência a uma oportunidade de Desenvolvedor. Buscamos uma pessoa com perfil hands-on para atuar na evolução de sistemas internos, desenvolvimento de automações e soluções com IA.'
 
-**1. Antes de tudo, medi a sujeira.** Abri o CSV e contei o estrago: 186 valores diferentes no campo de cidade, 5% de descrições vazias, HTML no meio do texto. Montei um pipeline em Python que normaliza tudo de forma **documentada e auditável** — 186 cidades viram **20 destinos canônicos**, com cada decisão registrada num relatório de qualidade. Cheguei a **94% das linhas com destino resolvido**.
+- De antemão, já sabia que poderia usar conhecimentos amplamente conhecidos para esse tipo de desafio: RAG - Retrieval-Augmented Generation (Geração Aumentada por Recuperação) - que basicamente nos permite obter respostas mais contextualziadas com as regras de negócio da empresa, através de documentos/imagens/áudios entre outros (tudo aquilo que possa ser convertido em texto).
+
+Site deles: https://ttwgroup.com/pt/home
+
+**1. Antes de tudo, meu radar com de processos ETL em grandes bases de dados logo confirmou as diversas inconsistências na base.** Abri o CSV e constatei o seguinte: 186 valores diferentes no campo de cidade, 5% de descrições vazias, HTML no meio do texto. Montei um pipeline em Python que normaliza tudo de forma **documentada e auditável** — 186 cidades viram **20 destinos canônicos**, com cada decisão registrada num relatório de qualidade. Cheguei a **94% das linhas com destino resolvido**.
 
 **2. Achei o fato que mudou o produto.** Ao deduplicar as descrições, descobri que as ~4.750 narrativas preenchidas são, na verdade, **73 textos distintos** (o mais comum se repete 100×). A base tem **tom e volume, não variedade**. Isso definiu todo o resto: o Concierge nunca promete mais dias do que há experiências realmente distintas, e o dashboard trata essa repetição como insight — não como defeito escondido.
 
@@ -20,7 +26,7 @@ Em vez de sair codando a feature mais vistosa, fui **incremental** — e boa par
 
 **4. Desafio 2 — a Inteligência de destinos.** Um dashboard que responde perguntas de negócio, não só conta linhas: para onde se viaja, **quem lidera cada experiência** (matriz destino × tema), quando, a tendência por destino e — com honestidade — o que a base *não* sustenta (sazonalidade fraca, duração subamostrada). A qualidade do dado aparece como confiança, não como diagnóstico cru.
 
-**5. O bônus — Descobrir Destino.** O consultor descreve o cliente e a plataforma recomenda o destino mais aderente, sempre com o **porquê** e as experiências reais que combinam.
+**5. O Bônus — Descobrir Destino.** O consultor descreve o cliente e a plataforma recomenda o destino mais aderente, sempre com o **porquê** e as experiências reais que combinam.
 
 **6. Empacotei e revisei.** Dei à ferramenta uma cara de produto de luxo (carvão + dourado champagne), coloquei login, deixei responsiva e publiquei na Vercel. No fim, fiz uma **revisão crítica da minha própria solução** contra os critérios do case e corrigi o que encontrei — repetição de dias, um slider que prometia mais do que a base entrega, jargão nas telas, latência desnecessária — validando cada ajuste na versão publicada.
 
