@@ -1,6 +1,6 @@
 import insights from "@/public/data/insights.json";
 import { PageHeader, PageShell, Kpi, SectionTitle } from "@/components/ui";
-import { BarList, Heat12 } from "@/components/charts";
+import { BarList, Heat12, MatrixHeat } from "@/components/charts";
 import DestinationExplorer from "@/components/DestinationExplorer";
 
 export default function DashboardPage() {
@@ -14,6 +14,23 @@ export default function DashboardPage() {
     .slice(0, 10)
     .map((t) => ({ label: t.theme, value: t.count }));
   const anos = insights.por_ano.map((y) => ({ label: y.ano, value: y.count }));
+
+  // Matriz destino × tema (afinidade temática por destino)
+  const themeCols = insights.temas_globais.slice(0, 10).map((t) => t.theme);
+  const THEME_SHORT: Record<string, string> = {
+    "Gastronomia": "Gastr.", "Arte & Museus": "Arte", "História & Cultura": "Hist.",
+    "Natureza & Paisagem": "Nat.", "Praia & Mar": "Praia", "Compras": "Compr.",
+    "Vida Noturna": "Noite", "Romance": "Rom.", "Aventura": "Avent.",
+    "Bem-estar": "Bem", "Arquitetura": "Arq.", "Parques Temáticos": "Parq.",
+  };
+  const matrixCities = insights.perfil_por_destino.map((p) => p.city);
+  const matrixValues = insights.perfil_por_destino.map((p) =>
+    themeCols.map((t) => (p.theme_scores as Record<string, number>)[t] ?? 0)
+  );
+  // Tendência ano a ano por destino
+  const anosLabel = insights.anos_label;
+  const trendCities = insights.tendencia_por_destino.map((t) => t.city);
+  const trendValues = insights.tendencia_por_destino.map((t) => t.counts);
 
   const totalCity = q.city_status as Record<string, number>;
   const resolved = q.linhas_com_destino_resolvido;
@@ -98,6 +115,34 @@ export default function DashboardPage() {
         <p className="mt-5 text-xs leading-relaxed text-muted">
           A amostra cobre 2018–2023 com volume estável entre os anos — sem tendência forte de crescimento
           ou queda. Leitura: a base é um recorte equilibrado no tempo, não uma série para projeção de demanda.
+        </p>
+      </div>
+
+      {/* Matriz destino × tema */}
+      <div className="mt-6 card p-7">
+        <SectionTitle note="afinidade por tema · célula mais clara = líder da coluna">Matriz destino × tema</SectionTitle>
+        <MatrixHeat
+          rowLabels={matrixCities}
+          colLabels={themeCols.map((t) => THEME_SHORT[t] || t)}
+          values={matrixValues}
+          normalize="col"
+          fmt={(v) => `${Math.round(v * 100)}% das atividades`}
+        />
+        <p className="mt-5 text-xs leading-relaxed text-muted">
+          Leitura por coluna: a célula mais clara aponta o destino que mais concentra cada tema na amostra —
+          quem lidera Gastronomia, Praia & Mar, História & Cultura etc. É o cruzamento que sustenta o
+          “Descobrir Destino”: casar o perfil do cliente com a assinatura real de cada lugar.
+        </p>
+      </div>
+
+      {/* Tendência por destino (ano a ano) */}
+      <div className="mt-6 card p-7">
+        <SectionTitle note="volume por ano · intensidade relativa a cada destino">Tendência por destino</SectionTitle>
+        <MatrixHeat rowLabels={trendCities} colLabels={anosLabel} values={trendValues} normalize="row" />
+        <p className="mt-5 text-xs leading-relaxed text-muted">
+          Cada linha é normalizada ao próprio destino, destacando o ano de maior volume. A leitura confirma a
+          estabilidade observada no agregado: não há tendência forte de crescimento ou queda por destino — as
+          variações são pequenas e dentro do ruído da amostra, e não devem ser lidas como projeção de demanda.
         </p>
       </div>
 

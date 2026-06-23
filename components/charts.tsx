@@ -1,4 +1,5 @@
 /** Visualizações em SVG/CSS — leves, sem dependências externas, tema TTW. */
+import { Fragment } from "react";
 
 export function BarList({
   data, max, suffix = "",
@@ -53,6 +54,63 @@ export function Heat12({ values, labels }: { values: number[]; labels: string[] 
           </div>
         );
       })}
+    </div>
+  );
+}
+
+/**
+ * Heatmap matricial (linhas × colunas). Normaliza a intensidade por coluna,
+ * por linha ou global, conforme a leitura desejada. A célula mais clara de
+ * cada faixa normalizada marca o líder daquela coluna/linha.
+ */
+export function MatrixHeat({
+  rowLabels,
+  colLabels,
+  values,
+  normalize = "col",
+  fmt,
+}: {
+  rowLabels: string[];
+  colLabels: string[];
+  values: number[][];
+  normalize?: "row" | "col" | "global";
+  fmt?: (v: number) => string;
+}) {
+  const globalMax = Math.max(...values.flat(), 1e-9);
+  const colMax = colLabels.map((_, c) => Math.max(...values.map((row) => row[c] ?? 0), 1e-9));
+  const scope = (r: number, c: number) =>
+    normalize === "row" ? Math.max(...values[r], 1e-9) : normalize === "col" ? colMax[c] : globalMax;
+
+  return (
+    <div className="overflow-x-auto">
+      <div
+        className="inline-grid gap-[2px]"
+        style={{ gridTemplateColumns: `minmax(92px,auto) repeat(${colLabels.length}, minmax(30px,1fr))` }}
+      >
+        <div />
+        {colLabels.map((c) => (
+          <div key={c} className="px-0.5 pb-1.5 text-center text-[10px] uppercase leading-tight text-muted">
+            {c}
+          </div>
+        ))}
+        {rowLabels.map((rl, r) => (
+          <Fragment key={rl}>
+            <div className="whitespace-nowrap py-0.5 pr-3 text-right text-xs text-ivory/80">{rl}</div>
+            {colLabels.map((cl, c) => {
+              const v = values[r]?.[c] ?? 0;
+              const a = 0.05 + 0.95 * (v / scope(r, c));
+              return (
+                <div
+                  key={cl}
+                  className="flex aspect-square min-h-[26px] items-center justify-center rounded-sm"
+                  style={{ background: `rgba(194,165,106,${a.toFixed(2)})` }}
+                  title={`${rl} · ${cl}: ${fmt ? fmt(v) : v}`}
+                />
+              );
+            })}
+          </Fragment>
+        ))}
+      </div>
     </div>
   );
 }

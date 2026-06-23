@@ -1,6 +1,6 @@
 # TTW Concierge — Plataforma de Inteligência de Roteiros
 
-> **Demo ao vivo:** _(adicionar URL da Vercel aqui após o deploy)_ · acesso: `consultor@ttw.com` / senha demo exibida na tela de login.
+> **Demo ao vivo:** https://ttw-concierge.vercel.app · acesso: `consultor@ttw.com` (a senha de demonstração aparece na própria tela de login).
 
 ## TL;DR — decisões e por quê (leia isto primeiro)
 

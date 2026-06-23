@@ -240,6 +240,13 @@ month_all = Counter(int(m) for m in df["month"].dropna())
 theme_global = Counter(t for ts in valid["themes"] for t in ts)
 year_counts = Counter(int(y) for y in df["year"].dropna())
 
+# tendência ano a ano por destino (cross-tab destino × ano)
+years_sorted = sorted(year_counts)
+dest_year = {}
+for city, g in valid.groupby("city_clean"):
+    yc = Counter(int(y) for y in g["year"].dropna())
+    dest_year[city] = [int(yc.get(yr, 0)) for yr in years_sorted]
+
 insights = {
     "kpis": {
         "atividades": n0,
@@ -259,6 +266,8 @@ insights = {
         "obs": "Amostra de 5.000 linhas: a maioria das viagens aparece com 1 dia amostrado; multi-dia e subamostrado.",
     },
     "por_ano": [{"ano":str(y),"count":year_counts.get(y,0)} for y in sorted(year_counts)],
+    "anos_label": [str(y) for y in years_sorted],
+    "tendencia_por_destino": [{"city":d["city"],"counts":dest_year.get(d["city"],[])} for d in destinations],
     "sazonalidade_por_destino": [{"city":d["city"],"seasonality":d["seasonality"],"peak":d["peak_month"]} for d in destinations],
     "perfil_por_destino": [{"city":d["city"],"theme_scores":d["theme_scores"],"top_themes":d["top_themes"],"unique_narratives":d["unique_narratives"]} for d in destinations],
 }
