@@ -97,6 +97,23 @@ export default function DashboardPage() {
         </div>
       </div>
 
+      {/* Matriz destino × tema — fecha o bloco de "assinatura" */}
+      <div className="mt-6 card p-7">
+        <SectionTitle note="afinidade por tema · célula mais clara = líder da coluna">Matriz destino × tema</SectionTitle>
+        <MatrixHeat
+          rowLabels={matrixCities}
+          colLabels={themeCols.map((t) => THEME_SHORT[t] || t)}
+          values={matrixValues}
+          normalize="col"
+          fmt={(v) => `${Math.round(v * 100)}% das atividades`}
+        />
+        <p className="mt-5 text-xs leading-relaxed text-muted">
+          Leitura por coluna: a célula mais clara aponta o destino que mais concentra cada tema na amostra —
+          quem lidera Gastronomia, Praia & Mar, História & Cultura etc. É o cruzamento que sustenta o
+          “Descobrir Destino”: casar o perfil do cliente com a assinatura real de cada lugar.
+        </p>
+      </div>
+
       {/* Sazonalidade global */}
       <div className="mt-6 card p-7">
         <SectionTitle note="atividades por mês · 5.000 linhas">Sazonalidade global</SectionTitle>
@@ -115,23 +132,6 @@ export default function DashboardPage() {
         <p className="mt-5 text-xs leading-relaxed text-muted">
           A amostra cobre 2018–2023 com volume estável entre os anos — sem tendência forte de crescimento
           ou queda. Leitura: a base é um recorte equilibrado no tempo, não uma série para projeção de demanda.
-        </p>
-      </div>
-
-      {/* Matriz destino × tema */}
-      <div className="mt-6 card p-7">
-        <SectionTitle note="afinidade por tema · célula mais clara = líder da coluna">Matriz destino × tema</SectionTitle>
-        <MatrixHeat
-          rowLabels={matrixCities}
-          colLabels={themeCols.map((t) => THEME_SHORT[t] || t)}
-          values={matrixValues}
-          normalize="col"
-          fmt={(v) => `${Math.round(v * 100)}% das atividades`}
-        />
-        <p className="mt-5 text-xs leading-relaxed text-muted">
-          Leitura por coluna: a célula mais clara aponta o destino que mais concentra cada tema na amostra —
-          quem lidera Gastronomia, Praia & Mar, História & Cultura etc. É o cruzamento que sustenta o
-          “Descobrir Destino”: casar o perfil do cliente com a assinatura real de cada lugar.
         </p>
       </div>
 
