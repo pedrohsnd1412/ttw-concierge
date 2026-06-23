@@ -33,11 +33,15 @@ export function BarList({
 }
 
 export function Heat12({ values, labels }: { values: number[]; labels: string[] }) {
-  const max = Math.max(...values, 1);
+  // Normaliza contra a faixa real (min–max) e não contra zero: como a sazonalidade
+  // costuma ser quase plana, ancorar no zero comprimiria toda a variação numa única tonalidade.
+  const max = Math.max(...values);
+  const min = Math.min(...values);
+  const range = max - min || 1;
   return (
     <div className="grid grid-cols-12 gap-1.5">
       {values.map((v, i) => {
-        const a = 0.12 + 0.88 * (v / max);
+        const a = 0.12 + 0.88 * ((v - min) / range);
         return (
           <div key={i} className="flex flex-col items-center gap-1">
             <div
